@@ -1,11 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
+import { setValContext } from "../App";
 import { makeStyles } from "@material-ui/core";
-
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormControlLabel";
 
 const useStyles = makeStyles({
 	label: {
@@ -13,29 +8,18 @@ const useStyles = makeStyles({
 	},
 });
 
-const Label = ({ value, handleClick }) => {
+const Label = ({ value }) => {
 	const classes = useStyles();
+	const setVal = useContext(setValContext);
 
 	return (
-		// <FormControl component="fieldset">
-		// 	<FormLabel component="legend" />
-		// 	<RadioGroup aria-label="gender">
-		// 		<FormControlLabel
-		// 			value={value}
-		// 			name="lang"
-		// 			control={<Radio />}
-		// 			label={value}
-		// 			onClick={handleClick}
-		// 		/>
-		// 	</RadioGroup>
-		// </FormControl>
 		<label>
 			<input
 				className={classes.label}
 				type="radio"
 				name="lang"
 				value={value}
-				onClick={handleClick}
+				onClick={() => setVal(value)}
 			/>
 			{value}
 		</label>

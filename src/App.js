@@ -1,6 +1,7 @@
 import React, { useState, createContext } from "react";
 import MovieArea from "./components/MovieArea";
-import Label from "./components/Label";
+import Spinner from "./components/Spinner";
+import LabelList from "./components/LabelList";
 import Header from "./components/Header";
 import axios from "axios";
 
@@ -12,6 +13,7 @@ const API_KEY = "AIzaSyC6bK-C9qZKMtOdGIKX_oBjhZgObnSJHsQ";
 
 export const toggleContext = createContext();
 export const valContext = createContext();
+export const setValContext = createContext();
 
 const useStyles = makeStyles({
 	center: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles({
 
 function App() {
 	const classes = useStyles();
-
+	const [isLoaded, setIsLoaded] = useState(false);
 	const [mainVideo, setMainVideo] = useState("");
 	const [thumbVideo, setThumbVideo] = useState("");
 	const [thumb2Video, setThumb2Video] = useState("");
@@ -32,6 +34,7 @@ function App() {
 
 	const handleSearch = () => {
 		setToggle(true);
+		setIsLoaded(false);
 
 		const params = {
 			key: API_KEY,
@@ -45,6 +48,7 @@ function App() {
 		const callApi = async () => {
 			const res = await axios.get(YOUTUBE_SEARCH_API_URL + queryParams);
 			const paramsData = await res.data.items;
+			setIsLoaded(true);
 			setMainVideo(paramsData[0].id.videoId);
 			setThumbVideo(paramsData[1].id.videoId);
 			setThumb2Video(paramsData[2].id.videoId);
@@ -52,14 +56,15 @@ function App() {
 		};
 		callApi();
 	};
+
+	// console.log(val);
+	// debugger;
 	return (
 		<>
 			<Header />
-			<form className={classes.center}>
-				<Label value={"いぬ"} handleClick={() => setVal("いぬ")} />
-				<Label value={"ネコ"} handleClick={() => setVal("ネコ")} />
-				<Label value={"たぬき"} handleClick={() => setVal("たぬき")} />
-			</form>
+			<setValContext.Provider value={setVal}>
+				<LabelList />
+			</setValContext.Provider>
 			<br />
 			<form className={classes.center}>
 				<Button onClick={handleSearch} variant="outlined">
@@ -70,19 +75,21 @@ function App() {
 				</Button>
 			</form>
 			<br />
-			<toggleContext.Provider value={toggle}>
+			{toggle && (
 				<valContext.Provider value={val}>
-					<MovieArea
-						mainVideo={mainVideo}
-						thumbVideo={thumbVideo}
-						thumb2Video={thumb2Video}
-					/>
+					{isLoaded ? (
+						<MovieArea
+							mainVideo={mainVideo}
+							thumbVideo={thumbVideo}
+							thumb2Video={thumb2Video}
+						/>
+					) : (
+						<Spinner />
+					)}
 				</valContext.Provider>
-			</toggleContext.Provider>
+			)}
 		</>
 	);
 }
 
 export default App;
-
-//切り替わる時間にローディングみたいな画面を入れたい。

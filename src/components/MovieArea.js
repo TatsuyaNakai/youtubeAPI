@@ -1,4 +1,5 @@
-import MovieLabel from "./MovieLabel";
+import React, { useContext } from "react";
+import { valContext } from "../App";
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -6,33 +7,48 @@ const useStyles = makeStyles({
 		display: "flex",
 		justifyContent: "space-between",
 	},
-	width: {
-		width: "640px",
-		margin: "0 auto",
+	item2: {
+		flex: 2,
+		marginRight: "3%",
+	},
+	item: {
+		flex: 1,
 	},
 });
 
-const MovieArea = ({ mainVideo, thumbVideo, thumb2Video }) => {
+const MovieArea = ({ videos, mainVideo }) => {
 	const classes = useStyles();
-
+	const val = useContext(valContext);
 	return (
-		<div className={classes.width}>
-			{/* {toggle && (
+		<div className={classes.flex}>
+			<div className={classes.item2}>
 				<iframe
 					title={val}
 					id="player"
-					width={width}
-					height={height}
-					src={`https://www.youtube.com/embed/${endSrc}`}
+					width={"100%"}
+					height={"100%"}
+					src={`https://www.youtube.com/embed/${mainVideo}`}
 					frameBorder="0"
 					allowFullScreen
 				/>
-			)} */}
-			<MovieLabel width={"640"} height={"360"} endSrc={mainVideo} />
-			<div className={classes.flex}>
-				<MovieLabel width={"256"} height={"144"} endSrc={thumbVideo} />
-				<MovieLabel width={"256"} height={"144"} endSrc={thumb2Video} />
+				<p>１番人気</p>
 			</div>
+			<ul className={classes.item}>
+				{videos.map((video, index) => (
+					<li key={index}>
+						<p>{index + 2}番人気</p>
+						<iframe
+							title={val}
+							id="player"
+							// width={"100%"}
+							// height={"100%"}
+							src={`https://www.youtube.com/embed/${video}`}
+							frameBorder="0"
+							allowFullScreen
+						/>
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 };

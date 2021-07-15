@@ -20,10 +20,6 @@ const useStyles = makeStyles({
 		width: "95%",
 		margin: "0 auto",
 	},
-	// center: {
-	// 	textAlign: "center",
-	// 	margin: "0 auto",
-	// },
 });
 
 function App() {
@@ -52,7 +48,7 @@ function App() {
 			const movieIds = await res.data.items;
 			setIsLoaded(true);
 			const movies = movieIds.map((movieId) => movieId.id.videoId);
-			setMainVideo(movies.splice(0, 1)); //これで入ってるか。エラーが起きたらおそらくここ
+			setMainVideo(movies.splice(0, 1));
 			setVideos(movies);
 		};
 		callApi();

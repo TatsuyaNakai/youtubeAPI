@@ -16,8 +16,8 @@ export const valContext = createContext();
 export const setValContext = createContext();
 
 const useStyles = makeStyles({
-	center: {
-		textAlign: "center",
+	container: {
+		width: "95%",
 		margin: "0 auto",
 	},
 });
@@ -25,10 +25,8 @@ const useStyles = makeStyles({
 function App() {
 	const classes = useStyles();
 	const [isLoaded, setIsLoaded] = useState(false);
-	const [mainVideo, setMainVideo] = useState("");
-	const [thumbVideo, setThumbVideo] = useState("");
-	const [thumb2Video, setThumb2Video] = useState("");
-
+	const [videos, setVideos] = useState([]);
+	const [mainVideo, setMainVideo] = useState([]);
 	const [val, setVal] = useState("");
 	const [toggle, setToggle] = useState(false);
 
@@ -43,51 +41,45 @@ function App() {
 			maxResults: 3,
 			order: "viewCount",
 		};
-
 		const queryParams = new URLSearchParams(params);
+
 		const callApi = async () => {
 			const res = await axios.get(YOUTUBE_SEARCH_API_URL + queryParams);
-			const paramsData = await res.data.items;
+			const movieIds = await res.data.items;
 			setIsLoaded(true);
-			setMainVideo(paramsData[0].id.videoId);
-			setThumbVideo(paramsData[1].id.videoId);
-			setThumb2Video(paramsData[2].id.videoId);
-			// これを1つのコードに書けるように
+			const movies = movieIds.map((movieId) => movieId.id.videoId);
+			setMainVideo(movies.splice(0, 1));
+			setVideos(movies);
 		};
 		callApi();
 	};
-
-	// console.log(val);
-	// debugger;
 	return (
 		<>
 			<Header />
-			<setValContext.Provider value={setVal}>
-				<LabelList />
-			</setValContext.Provider>
-			<br />
-			<form className={classes.center}>
-				<Button onClick={handleSearch} variant="outlined">
-					検索
-				</Button>
-				<Button onClick={() => setToggle(false)} variant="outlined">
-					削除
-				</Button>
-			</form>
-			<br />
-			{toggle && (
-				<valContext.Provider value={val}>
-					{isLoaded ? (
-						<MovieArea
-							mainVideo={mainVideo}
-							thumbVideo={thumbVideo}
-							thumb2Video={thumb2Video}
-						/>
-					) : (
-						<Spinner />
-					)}
-				</valContext.Provider>
-			)}
+			<div div className={classes.container}>
+				<setValContext.Provider value={setVal}>
+					<LabelList />
+				</setValContext.Provider>
+				<br />
+				<form className={classes.center}>
+					<Button onClick={handleSearch} variant="outlined">
+						検索
+					</Button>
+					<Button onClick={() => setToggle(false)} variant="outlined">
+						削除
+					</Button>
+				</form>
+				<br />
+				{toggle && (
+					<valContext.Provider value={val}>
+						{isLoaded ? (
+							<MovieArea videos={videos} mainVideo={mainVideo} />
+						) : (
+							<Spinner />
+						)}
+					</valContext.Provider>
+				)}
+			</div>
 		</>
 	);
 }
